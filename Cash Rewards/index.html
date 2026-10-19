@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eSewa Rewards Nepal - Earn Cash Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        esewa: '#60bb46',
+                        esewaDark: '#4ca533',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 px-4 sm:px-8 py-3.5 flex justify-between items-center shadow-md">
+        <div class="flex items-center space-x-3">
+            <div class="bg-esewa text-white font-black px-3 py-1.5 rounded-xl text-lg tracking-wider flex items-center space-x-1.5 shadow-sm">
+                <i class="fa-solid fa-wallet"></i>
+                <span>eSewa Earn</span>
+            </div>
+            <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full font-medium hidden sm:inline">Nepal Rewards</span>
+        </div>
+
+        <!-- Wallet & Profile -->
+        <div class="flex items-center space-x-3 sm:space-x-4">
+            <div class="bg-slate-950 border border-slate-800 px-3.5 py-1.5 rounded-xl flex items-center space-x-2">
+                <i class="fa-solid fa-coins text-amber-400"></i>
+                <span class="text-xs text-slate-400 font-medium">Balance:</span>
+                <span id="userBalanceDisplay" class="font-bold text-esewa text-sm sm:text-base">Rs. 0.00</span>
+            </div>
+            <button onclick="openCashoutModal()" class="bg-esewa hover:bg-esewaDark text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-esewa/20 transition flex items-center space-x-1.5">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                <span>Cashout</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+        
+        <!-- Welcome Hero Banner -->
+        <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-esewa/10 border border-slate-800 rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-sm">
+            <div class="max-w-xl">
+                <h1 class="text-2xl sm:text-3xl font-black text-white">Complete Tasks & Earn Instant eSewa Cash!</h1>
+                <p class="text-slate-400 text-sm mt-2">Watch video ads, answer quick surveys, and withdraw your earnings directly to your verified eSewa account instantly.</p>
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <button onclick="claimDailyBonus()" id="dailyBonusBtn" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm transition flex items-center space-x-2 shadow-sm">
+                        <i class="fa-solid fa-gift"></i>
+                        <span>Claim Daily Check-in (Rs. 10)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Offerwall Section -->
+        <section class="space-y-4">
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-fire text-amber-400"></i>
+                    <span>Available Earning Offers</span>
+                </h2>
+                <span class="text-xs text-slate-400">Updated today</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="taskContainer">
+                <!-- Task Card 1: Video Ad -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-full text-xs font-semibold">Video Ad</span>
+                            <span class="text-esewa font-black text-base">+Rs. 15.00</span>
+                        </div>
+                        <h3 class="font-bold text-white text-base">Watch Sponsored Video</h3>
+                        <p class="text-slate-400 text-xs mt-1">Watch a 15-second promotional clip to get rewarded.</p>
+                    </div>
+                    <button onclick="startTask('Watch Sponsored Video', 15, 15)" class="mt-5 w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-play text-xs"></i>
+                        <span>Start Task</span>
+                    </button>
+                </div>
+
+                <!-- Task Card 2: Survey -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-full text-xs font-semibold">Survey</span>
+                            <span class="text-esewa font-black text-base">+Rs. 50.00</span>
+                        </div>
+                        <h3 class="font-bold text-white text-base">Nepal Telecom Services Poll</h3>
+                        <p class="text-slate-400 text-xs mt-1">Answer 3 quick questions about mobile internet quality.</p>
+                    </div>
+                    <button onclick="startSurveyTask()" class="mt-5 w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-square-poll-vertical text-xs"></i>
+                        <span>Take Survey</span>
+                    </button>
+                </div>
+
+                <!-- Task Card 3: App Install -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between hover:border-slate-700 transition">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full text-xs font-semibold">App Install</span>
+                            <span class="text-esewa font-black text-base">+Rs. 100.00</span>
+                        </div>
+                        <h3 class="font-bold text-white text-base">Download & Test eSewa Game</h3>
+                        <p class="text-slate-400 text-xs mt-1">Install partner application and open for 30 seconds.</p>
+                    </div>
+                    <button onclick="startTask('Download eSewa Game', 30, 100)" class="mt-5 w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-download text-xs"></i>
+                        <span>Start Task</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Cashout Modal -->
+    <div id="cashoutModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 space-y-5 shadow-xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-money-bill-transfer text-esewa"></i>
+                    <span>Withdraw via eSewa</span>
+                </h3>
+                <button onclick="closeCashoutModal()" class="text-slate-400 hover:text-white text-sm"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">eSewa Full Name</label>
+                    <input type="text" id="esewaName" placeholder="Enter your full name" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-esewa">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">eSewa Mobile Number</label>
+                    <input type="tel" id="esewaPhone" placeholder="98XXXXXXXX" maxlength="10" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-esewa">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Withdrawal Amount (Min. Rs. 100)</label>
+                    <input type="number" id="esewaAmount" placeholder="100" class="w-full bg-slate-950

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - eSewa Rewards Nepal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        esewa: '#60bb46',
+                        esewaDark: '#4ca533',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <!-- Admin Header -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center shadow-md">
+        <div class="flex items-center space-x-3">
+            <div class="bg-esewa text-white font-black px-3 py-1.5 rounded-lg text-lg tracking-wider">
+                ADMIN PANEL
+            </div>
+            <span class="text-slate-400 text-sm hidden sm:inline">eSewa Rewards Management</span>
+        </div>
+        <div class="flex items-center space-x-4">
+            <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Back to User Site</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Admin Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-sm">
+                <p class="text-slate-400 text-sm font-medium">Total Registered Users</p>
+                <h3 class="text-3xl font-bold mt-2 text-white" id="adminUserCount">1</h3>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-sm">
+                <p class="text-slate-400 text-sm font-medium">Pending Payouts</p>
+                <h3 class="text-3xl font-bold mt-2 text-amber-400" id="adminPendingCount">0</h3>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-sm">
+                <p class="text-slate-400 text-sm font-medium">Total Paid Out (eSewa)</p>
+                <h3 class="text-3xl font-bold mt-2 text-esewa" id="adminPaidTotal">Rs. 0</h3>
+            </div>
+        </div>
+
+        <!-- Withdrawal Requests Table -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-money-bill-transfer text-esewa"></i>
+                    <span>eSewa Withdrawal Requests</span>
+                </h2>
+                <button onclick="loadAdminData()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-slate-300 transition">
+                    <i class="fa-solid fa-rotate mr-1"></i> Refresh
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-950/50 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
+                            <th class="p-4">User Name</th>
+                            <th class="p-4">eSewa Number</th>
+                            <th class="p-4">Amount</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminWithdrawalsTable" class="divide-y divide-slate-800 text-sm">
+                        <!-- Loaded dynamically from localStorage -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-6 text-slate-500 text-xs border-t border-slate-800 mt-auto">
+        &copy; 2026 eSewa Rewards Nepal. Admin Secured Portal.
+    </footer>
+
+    <script>
+        function loadAdminData() {
+            const withdrawals = JSON.parse(localStorage.getItem('esewa_withdrawals')) || [];
+            const tbody = document.getElementById('adminWithdrawalsTable');
+            tbody.innerHTML = '';
+
+            let pendingCount = 0;
+            let paidTotal = 0;
+
+            if (withdrawals.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">No withdrawal requests found yet.</td></tr>`;
+            } else {
+                withdrawals.forEach((w, index) => {
+                    if (w.status === 'Pending') pendingCount++;
+                    if (w.status === 'Approved') paidTotal += Number(w.amount);
+
+                    let badge = '';
+                    if (w.status === 'Pending') badge = `<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-full text-xs font-medium">Pending</span>`;
+                    else if (w.status === 'Approved') badge = `<span class="bg-esewa/10 text-esewa border border-esewa/20 px-2.5 py-1 rounded-full text-xs font-medium">Approved</span>`;
+                    else badge = `<span class="bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2.5 py-1 rounded-full text-xs font-medium">Rejected</span>`;
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-4 font-medium text-white">${w.name}</td>
+                            <td class="p-4 text-slate-300">${w.phone}</td>
+                            <td class="p-4 font-bold text-esewa">Rs. ${w.amount}</td>
+                            <td class="p-4">${badge}</td>
+                            <td class="p-4 text-right space-x-2">
+                                ${w.status === 'Pending' ? `
+                                    <button onclick="updateWithdrawal(${index}, 'Approved')" class="bg-esewa hover:bg-esewaDark text-white px-3 py-1 rounded text-xs font-medium transition">Approve</button>
+                                    <button onclick="updateWithdrawal(${index}, 'Rejected')" class="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1 rounded text-xs font-medium transition">Reject</button>
+                                ` : `<span class="text-slate-500 text-xs italic">Completed</span>`}
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            document.getElementById('adminPendingCount').innerText = pendingCount;
+            document.getElementById('adminPaidTotal').innerText = `Rs. ${paidTotal}`;
+        }
+
+        function updateWithdrawal(index, status) {
+            let withdrawals = JSON.parse(localStorage.getItem('esewa_withdrawals')) || [];
+            withdrawals[index].status = status;
+            localStorage.setItem('esewa_withdrawals', JSON.stringify(withdrawals));
+            loadAdminData();
+        }
+
+        window.onload = loadAdminData;
+    </script>
+</body>
+</html>
